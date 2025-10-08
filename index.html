@@ -223,24 +223,7 @@
   </footer>
 
   <!-- Firebase -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDx3lFGKQb22p7ndD5u-EjiZzjGKxXB8E8",
-      authDomain: "ai-medical-system.firebaseapp.com",
-      projectId: "ai-medical-system",
-      storageBucket: "ai-medical-system.firebasestorage.app",
-      messagingSenderId: "47842115705",
-      appId: "1:47842115705:web:3921eef409c2d2a1b694a8"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    const authButtons = document.getElementById('authButtons');
-    const checkSymptomsBtn = document.getElementById('checkSymptomsBtn');
+ 
 
     // Update navbar dynamically based on login status
     onAuthStateChanged(auth, (user) => {
