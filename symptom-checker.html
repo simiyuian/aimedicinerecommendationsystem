@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symptom Checker - AI Medical Recommendation System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <div class="navbar-brand-container">
+                <i class="fas fa-heartbeat logo-icon"></i>
+                <a class="navbar-brand" href="index.html">MedAI Assistant</a>
+            </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="symptom-checker.html">
+                            <i class="fas fa-stethoscope"></i> Symptom Checker
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.html">
+                            <i class="fas fa-info-circle"></i> About
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact.html">
+                            <i class="fas fa-envelope"></i> Contact
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-5 pt-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Header -->
+                <div class="text-center mb-5">
+                    <h1 class="display-4 text-primary">
+                        <i class="fas fa-stethoscope"></i> AI Symptom Checker
+                    </h1>
+                    <p class="lead text-muted">Describe your symptoms and get AI-powered health recommendations</p>
+                </div>
+
+                <!-- Symptom Input Form -->
+                <div class="card shadow-lg mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">
+                            <i class="fas fa-edit"></i> Enter Your Symptoms
+                        </h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <form id="symptomForm">
+                            <div class="mb-4">
+                                <label for="symptoms" class="form-label h5">Describe Your Symptoms</label>
+                                <textarea 
+                                    class="form-control form-control-lg" 
+                                    id="symptoms" 
+                                    name="symptoms" 
+                                    rows="4" 
+                                    placeholder="e.g., itching, skin rash, fatigue, fever, headache, cough..."
+                                    required
+                                ></textarea>
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle"></i> 
+                                    Be as specific as possible. Use medical terms when possible. Separate multiple symptoms with commas.
+                                </div>
+                            </div>
+
+                            <!-- Quick Symptom Buttons -->
+                            <div class="mb-4">
+                                <h6 class="mb-3">Quick Add Common Symptoms:</h6>
+                                <div class="symptom-buttons">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm me-2 mb-2" onclick="addSymptom('itching')">Itching</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm me-2 mb-2" onclick="addSymptom('skin rash')">Skin Rash</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm me-2 mb-2" onclick="addSymptom('high fever')">High Fever</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm me-2 mb-2" onclick="addSymptom('fatigue')">Fatigue</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm me-2 mb-2" onclick="addSymptom('vomiting')">Vomiting</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm me-2 mb-2" onclick="addSymptom('headache')">Headache</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm me-2 mb-2" onclick="addSymptom('chest pain')">Chest Pain</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm me-2 mb-2" onclick="addSymptom('joint pain')">Joint Pain</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm me-2 mb-2" onclick="addSymptom('weight loss')">Weight Loss</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm me-2 mb-2" onclick="addSymptom('yellowish skin')">Yellowish Skin</button>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-danger btn-lg w-100" id="analyzeBtn">
+                                <i class="fas fa-search"></i> Get AI Recommendation
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Loading Indicator -->
+                <div id="loadingIndicator" class="text-center mb-4" style="display: none;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Analyzing your symptoms with AI...</p>
+                </div>
+
+                <!-- Results Section -->
+                <div id="resultsSection" style="display: none;">
+                    <h2 class="text-center mb-4">
+                        <i class="fas fa-chart-line"></i> AI Analysis Results
+                    </h2>
+                    
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <button class="btn btn-warning w-100 result-btn" data-bs-toggle="modal" data-bs-target="#diseaseModal">
+                                <i class="fas fa-diagnoses"></i><br>
+                                <strong>Disease</strong>
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-info w-100 result-btn" data-bs-toggle="modal" data-bs-target="#descriptionModal">
+                                <i class="fas fa-file-alt"></i><br>
+                                <strong>Description</strong>
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-secondary w-100 result-btn" data-bs-toggle="modal" data-bs-target="#precautionModal">
+                                <i class="fas fa-shield-alt"></i><br>
+                                <strong>Precautions</strong>
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-danger w-100 result-btn" data-bs-toggle="modal" data-bs-target="#medicationsModal">
+                                <i class="fas fa-pills"></i><br>
+                                <strong>Medications</strong>
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-success w-100 result-btn" data-bs-toggle="modal" data-bs-target="#workoutsModal">
+                                <i class="fas fa-dumbbell"></i><br>
+                                <strong>Workouts</strong>
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-warning w-100 result-btn" data-bs-toggle="modal" data-bs-target="#dietsModal">
+                                <i class="fas fa-apple-alt"></i><br>
+                                <strong>Diet</strong>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Confidence Score -->
+                    <div class="alert alert-info text-center">
+                        <h5><i class="fas fa-chart-bar"></i> Confidence Score: <span id="confidenceScore">85%</span></h5>
+                    </div>
+                </div>
+
+                <!-- Medical Disclaimer -->
+                <div class="alert alert-warning mt-4">
+                    <h5><i class="fas fa-exclamation-triangle"></i> Important Medical Disclaimer</h5>
+                    <p class="mb-0">This AI analysis is for informational purposes only and should not replace professional medical advice. Always consult with a qualified healthcare provider for proper diagnosis and treatment.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Disease Modal -->
+    <div class="modal fade" id="diseaseModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title">
+                        <i class="fas fa-diagnoses"></i> Predicted Disease
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <h3 id="predictedDisease" class="text-primary">Common Cold</h3>
+                        <div class="badge bg-success fs-6 mt-2">
+                            Confidence: <span id="diseaseConfidence">85%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Description Modal -->
+    <div class="modal fade" id="descriptionModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-file-alt"></i> Description
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="diseaseDescription">
+                        A viral infection of the upper respiratory tract that commonly affects the nose and throat. 
+                        It is usually harmless and symptoms typically resolve within 7-10 days.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Precautions Modal -->
+    <div class="modal fade" id="precautionModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-secondary text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-shield-alt"></i> Precautions
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <ul id="precautionsList" class="list-group list-group-flush">
+                        <li class="list-group-item"><i class="fas fa-check text-success"></i> Get plenty of rest and sleep</li>
+                        <li class="list-group-item"><i class="fas fa-check text-success"></i> Stay hydrated by drinking lots of fluids</li>
+                        <li class="list-group-item"><i class="fas fa-check text-success"></i> Avoid close contact with others</li>
+                        <li class="list-group-item"><i class="fas fa-check text-success"></i> Wash hands frequently</li>
+                        <li class="list-group-item"><i class="fas fa-check text-success"></i> Cover mouth when coughing</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Medications Modal -->
+    <div class="modal fade" id="medicationsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-pills"></i> Medications
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <ul id="medicationsList" class="list-group list-group-flush">
+                        <li class="list-group-item"><i class="fas fa-pill text-danger"></i> Acetaminophen for fever and pain</li>
+                        <li class="list-group-item"><i class="fas fa-pill text-danger"></i> Ibuprofen for inflammation</li>
+                        <li class="list-group-item"><i class="fas fa-pill text-danger"></i> Decongestants for nasal congestion</li>
+                        <li class="list-group-item"><i class="fas fa-pill text-danger"></i> Throat lozenges for sore throat</li>
+                        <li class="list-group-item"><i class="fas fa-pill text-danger"></i> Cough suppressants if needed</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workouts Modal -->
+    <div class="modal fade" id="workoutsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-dumbbell"></i> Recommended Workouts
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <ul id="workoutsList" class="list-group list-group-flush">
+                        <li class="list-group-item"><i class="fas fa-walking text-success"></i> Light walking for 10-15 minutes</li>
+                        <li class="list-group-item"><i class="fas fa-walking text-success"></i> Gentle stretching exercises</li>
+                        <li class="list-group-item"><i class="fas fa-walking text-success"></i> Deep breathing exercises</li>
+                        <li class="list-group-item"><i class="fas fa-walking text-success"></i> Avoid intense workouts until recovered</li>
+                        <li class="list-group-item"><i class="fas fa-walking text-success"></i> Yoga or meditation for stress relief</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Diets Modal -->
+    <div class="modal fade" id="dietsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title">
+                        <i class="fas fa-apple-alt"></i> Recommended Diet
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <ul id="dietsList" class="list-group list-group-flush">
+                        <li class="list-group-item"><i class="fas fa-utensils text-warning"></i> Chicken soup for hydration and comfort</li>
+                        <li class="list-group-item"><i class="fas fa-utensils text-warning"></i> Warm tea with honey and lemon</li>
+                        <li class="list-group-item"><i class="fas fa-utensils text-warning"></i> Fresh fruits rich in vitamin C</li>
+                        <li class="list-group-item"><i class="fas fa-utensils text-warning"></i> Plenty of water and clear fluids</li>
+                        <li class="list-group-item"><i class="fas fa-utensils text-warning"></i> Avoid dairy if it increases mucus</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/medical-data.js"></script>
+<script src="js/symptom-checker.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/medical-data.js" defer></script>
+<script src="js/symptom-checker.js" defer></script>
+
+</body>
+</html>
+
+
